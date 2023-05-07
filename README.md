@@ -18,11 +18,18 @@ Update-os
 Запуск Playbook
 ---------------
 
+Используем отдельный мастер сервер, где установлен Ansible
+
+Создаем ssh ключ
+```
+ssh-keygen
+```
 Устанавливаем ssh соединение с сервером Ubuntu 20.04: 
+Выведем на экран ключ чтобы скопировать его
 ```
 cat .ssh/id_rsa.
 ```
-Результат:
+Копируем результат:
 > ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDRCPhIiUAiHsv2Unm34nUNx9xotzAx7rIXLTI08Lxwh3vRdeR+nrjCfA9n61UarJF9oKdUFSvGv4FzqLKk5eWBwH9Azd7oOakRrNMxQgiHlwebeefYtOP0uD55DEJgXGCMBs1/k/S8KQPhcsp5q30lwRcnHYyfDEsbhgWDpxqVIrPaGm9OSAxVxfpgEpHzeA4+93PAe54yvNjGquA7u3rE2vos3HEdaHddDUbbHH41HlQMA8VEnNEa+bJHFGcPqYb197afCShH/XYJ/GoRWhv3n9x0R1IPrF9oDFS5Urr7IYbj8ITioacpYTYUIGSD6l1k7mjRDkHCGt2IDmASsmU1 root@localhost.localdomain
 
 Заходим на сервер ubuntu 20.04 (замените user и ip_addr_server_ubuntu20.04 на ваши переменные):
@@ -38,7 +45,7 @@ nano /root/.ssh/authorized_keys
 ``` 
 service ssh restart 
 ``` 
-Устанавливаем ssh соединение с сервером Centos 7:
+Возвращаемся на наш мастер сервер. Устанавливаем ssh соединение с сервером Centos 7:
 ```
 ssh-copy-id root@ip_addr_server_centos7
 ```
