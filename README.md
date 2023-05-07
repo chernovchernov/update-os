@@ -54,6 +54,11 @@ nano inventory.txt
 ``` 
 Напротив ip адреса сервера ubuntu вставьте строчку `ansible_python_interpreter=/usr/bin/python3.8`
 
+Откройте файл `roles/update-os/tasks/main.yml`, впишите название Ubuntu сервера в последней строке, в нашем случае это vm6 
+``` 
+when: ansible_fqdn == "vm6"
+``` 
+
 Запускаем проверку ansible ping командой 
 ``` 
 ansible -i inventory.txt all -m ping 
