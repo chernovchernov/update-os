@@ -1,0 +1,70 @@
+---
+- name: Обновление если операционная система CentOS7
+  block:
+
+  - name: CentOS7 загружаем vars
+    include_vars: centos7.yml
+
+  - name: CentOS7 скачиваем пакеты из репозитория, обновляем с исключениями
+    yum:
+      name: '*'
+      state: latest
+      exclude: "{{ excluded_packages }}"
+    register: yum_update_result
+
+  - name: CentOS7 провека нужна ли перезагрузка
+    reboot:
+      test_command: "needs-restarting -r"
+    when: yum_update_result.changed
+
+  - name: CentOS7 перезагрузка системы после обновления пакетов
+    reboot:
+      test_command: "needs-restarting -r"
+    when: yum_update_result is success and 'reboot_required' in yum_update_result
+
+  - name: CentOS7 установка yum-utils 
+    yum:
+      name: yum-utils
+      state: present
+
+  - name: CentOS7 удаляем старые версии ядер кроме последних двух
+    command: package-cleanup --oldkernels --count=2
+
+  when: ansible_fqdn == "localhost.localdomain"
+
+
+- name: Обновление если операционная система Ubuntu 20.04
+  block:
+
+  - name: Ubuntu 20.04 загружаем vars
+    include_vars: ubuntu20.04.yml
+
+  - name: Ubuntu 20.04 скачиваем пакеты из репозитория
+    apt: update_cache=yes force_apt_get=yes cache_valid_time=3600
+
+  - name: Ubuntu 20.04 исключение обновления пакета
+    shell: apt-mark hold "{{ excluded_packages }}"
+
+  - name: Ubuntu 20.04 обновляем пакеты
+    apt: upgrade=dist force_apt_get=yes
+    register: apt_upgrade
+
+  - name: Ubuntu 20.04 перезагрузка системы после обновления пакетов
+    become: true
+    reboot:
+    when: apt_upgrade is changed
+
+  - name: Ubuntu 20.04 устанавливаем зависимости переменных
+    setup:
+
+  - name: Ubuntu 20.04 удаляем старые версии ядер кроме последних двух
+    become: true
+    shell: |
+      packages_to_remove=$(dpkg -l 'linux-*' | grep '^ii' | awk '{print $2}' | grep -v -e $(uname -r | cut -f1,2 -d"-") -e $(uname -r | cut -f1,2,3,4 -d"-"))
+      if [ -n "$packages_to_remove" ]; then
+        apt-get -y purge $packages_to_remove
+      fi
+    register: remove_kernel_packages
+    when: ansible_distribution == 'Ubuntu' and ansible_distribution_release in ['focal', 'bionic', 'xenial']
+
+  when: ansible_fqdn == "vm6"

@@ -1,0 +1,10 @@
+---
+ansible_python_interpreter: /usr/bin/python3.8
+
+excluded_packages:
+ - git
+ - curl
+
+
+ansible_distribution: ubuntu
+ansible_distribution_release: bionic

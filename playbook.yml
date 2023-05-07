@@ -1,0 +1,7 @@
+---
+- name: update-os
+  hosts: all
+  become: yes
+
+  roles:
+    - role: update-os
