@@ -55,7 +55,7 @@ ssh-copy-id root@ip_addr_server_centos7
 ``` 
 cd update-os 
 ``` 
-Откройте файл `inventiry.txt`, впишите туда ip адреса своих серверов 
+Откройте файл `inventory.txt`, впишите туда ip адреса своих серверов 
 ``` 
 nano inventory.txt 
 ``` 
